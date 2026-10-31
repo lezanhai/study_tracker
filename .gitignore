@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# VS Code settings (không bắt buộc phải backup)
+.vscode/
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
