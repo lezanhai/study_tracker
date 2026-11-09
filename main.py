@@ -15,28 +15,11 @@ from database import DatabaseManager
 from study_timer import StudyTimer
 from pomodoro_timer import PomodoroTimer
 from exporter import export_report
-
-
-# =========================================
-# CẤU HÌNH MÀU SẮC
-# =========================================
-
-BG = "#F1F5F9"
-WHITE = "#FFFFFF"
-NAVY = "#172554"
-BLUE = "#2563EB"
-BLUE_HOVER = "#1D4ED8"
-TEAL = "#0F766E"
-TEXT = "#1E293B"
-MUTED = "#64748B"
-BORDER = "#E2E8F0"
-RED = "#DC2626"
-
-# Bảng màu cho biểu đồ
-CHART_COLORS = [
-    "#2563EB", "#0F766E", "#F59E0B", "#DC2626",
-    "#7C3AED", "#0891B2", "#65A30D", "#DB2777"
-]
+from theme import (
+    BG, WHITE, NAVY, BLUE, TEAL, TEXT, MUTED, BLUE_HOVER, RED,
+    CHART_COLORS, apply_style
+)
+from utils import format_duration, get_date_range, setup_table
 
 class StudyTrackerApp:
 
@@ -67,7 +50,7 @@ class StudyTrackerApp:
 
         self.subject_map = {}
 
-        self.setup_style()
+        apply_style()
         self.build_header()
         self.build_notebook()
 
@@ -92,172 +75,6 @@ class StudyTrackerApp:
             self.close_app
         )
 
-    # =========================================
-    # STYLE
-    # =========================================
-
-    def setup_style(self):
-
-        style = ttk.Style()
-        style.theme_use("clam")
-
-        style.configure(".", font=("Segoe UI", 10))
-
-        style.configure("TFrame", background=BG)
-        style.configure("Card.TFrame", background=WHITE)
-
-        style.configure(
-            "TLabel",
-            background=BG,
-            foreground=TEXT,
-            font=("Segoe UI", 10)
-        )
-
-        style.configure(
-            "Title.TLabel",
-            background=BG,
-            foreground=NAVY,
-            font=("Segoe UI", 20, "bold")
-        )
-
-        style.configure(
-            "Subtitle.TLabel",
-            background=BG,
-            foreground=MUTED
-        )
-
-        style.configure(
-            "CardTitle.TLabel",
-            background=WHITE,
-            foreground=NAVY,
-            font=("Segoe UI", 11, "bold")
-        )
-
-        style.configure(
-            "Value.TLabel",
-            background=WHITE,
-            foreground=BLUE,
-            font=("Segoe UI", 19, "bold")
-        )
-
-        style.configure(
-            "TButton",
-            font=("Segoe UI", 10, "bold"),
-            padding=(14, 9),
-            background=BLUE,
-            foreground=WHITE,
-            borderwidth=0
-        )
-
-        style.map(
-            "TButton",
-            background=[
-                ("active", BLUE_HOVER),
-                ("disabled", "#CBD5E1")
-            ],
-            foreground=[
-                ("disabled", "#64748B")
-            ]
-        )
-
-        style.configure(
-            "Secondary.TButton",
-            background="#E2E8F0",
-            foreground=NAVY
-        )
-
-        style.configure(
-            "Danger.TButton",
-            background=RED,
-            foreground=WHITE
-        )
-
-        style.configure(
-            "TNotebook",
-            background=BG,
-            borderwidth=0
-        )
-
-        style.configure(
-            "TNotebook.Tab",
-            background="#E2E8F0",
-            foreground=MUTED,
-            padding=(15, 12),
-            font=("Segoe UI", 10, "bold")
-        )
-
-        style.map(
-            "TNotebook.Tab",
-            background=[
-                ("selected", WHITE),
-                ("active", "#DBEAFE")
-            ],
-            foreground=[
-                ("selected", BLUE),
-                ("active", NAVY)
-            ]
-        )
-
-        style.configure(
-            "Treeview",
-            background=WHITE,
-            fieldbackground=WHITE,
-            foreground=TEXT,
-            rowheight=32,
-            font=("Segoe UI", 10)
-        )
-
-        style.configure(
-            "Treeview.Heading",
-            background="#E2E8F0",
-            foreground=NAVY,
-            font=("Segoe UI", 10, "bold"),
-            padding=10,
-            relief="flat"
-        )
-
-        style.map(
-            "Treeview",
-            background=[("selected", "#DBEAFE")],
-            foreground=[("selected", NAVY)]
-        )
-
-        style.configure("TEntry", padding=8, fieldbackground=WHITE)
-        style.configure("TCombobox", padding=7, fieldbackground=WHITE)
-
-        style.configure(
-            "Horizontal.TProgressbar",
-            troughcolor="#E2E8F0",
-            background=TEAL,
-            thickness=16
-        )
-
-    # =========================================
-    # HÀM CĂN CỘT CHO BẢNG (SỬA LỆCH CỘT)
-    # =========================================
-
-    def setup_table(self, table, columns):
-        """
-        columns: danh sách (mã_cột, tiêu_đề, độ_rộng, căn_lề)
-        Tiêu đề và dữ liệu dùng CHUNG một kiểu căn lề
-        nên luôn thẳng hàng với nhau.
-        """
-
-        for column_id, title, width, anchor in columns:
-
-            table.heading(
-                column_id,
-                text=title,
-                anchor=anchor
-            )
-
-            table.column(
-                column_id,
-                width=width,
-                minwidth=width,
-                anchor=anchor,
-                stretch=True
-            )
 
     # =========================================
     # HEADER
@@ -563,7 +380,7 @@ class StudyTrackerApp:
             show="headings"
         )
 
-        self.setup_table(
+        setup_table(
             self.subject_table,
             [
                 ("id", "Mã môn", 80, "center"),
@@ -845,7 +662,7 @@ class StudyTrackerApp:
             height=5
         )
 
-        self.setup_table(
+        setup_table(
             self.session_table,
             [
                 ("id", "Mã", 50, "center"),
@@ -1056,7 +873,7 @@ class StudyTrackerApp:
                     session_id,
                     subject,
                     study_date,
-                    self.format_duration(duration_seconds),
+                    format_duration(duration_seconds),
                     note
                 )
             )
@@ -1970,7 +1787,7 @@ class StudyTrackerApp:
             height=4
         )
 
-        self.setup_table(
+        setup_table(
             self.statistics_subject_table,
             [
                 ("subject", "Môn học", 250, "w"),
@@ -2022,7 +1839,7 @@ class StudyTrackerApp:
             height=4
         )
 
-        self.setup_table(
+        setup_table(
             self.statistics_daily_table,
             [
                 ("date", "Ngày học", 250, "w"),
@@ -2132,7 +1949,7 @@ class StudyTrackerApp:
 
     def export_statistics(self):
 
-        start_date, end_date = self.get_date_range()
+        start_date, end_date = get_date_range(self.period_combo.get())
 
         rows = self.db.get_sessions_for_export(start_date, end_date)
 
@@ -2189,49 +2006,17 @@ class StudyTrackerApp:
             f"Đã xuất báo cáo:\n{path}"
         )
 
-    def get_date_range(self):
-
-        today = date.today()
-        period = self.period_combo.get()
-
-        if period == "Hôm nay":
-            start_date = today
-
-        elif period == "Tuần này":
-            start_date = today - timedelta(days=today.weekday())
-
-        elif period == "Tháng này":
-            start_date = today.replace(day=1)
-
-        else:
-            start_date = date(1, 1, 1)
-
-        return start_date.isoformat(), today.isoformat()
-
-    def format_duration(self, total_seconds):
-
-        hours = total_seconds // 3600
-        minutes = (total_seconds % 3600) // 60
-        seconds = total_seconds % 60
-
-        if hours > 0:
-            return f"{hours} giờ {minutes} phút"
-
-        elif minutes > 0:
-            return f"{minutes} phút {seconds} giây"
-
-        return f"{seconds} giây"
 
     def load_statistics(self):
 
-        start_date, end_date = self.get_date_range()
+        start_date, end_date = get_date_range(self.period_combo.get())
 
         summary, subject_data, daily_data = (
             self.db.get_statistics(start_date, end_date)
         )
 
         self.total_time_label.config(
-            text=self.format_duration(summary[0])
+            text=format_duration(summary[0])
         )
 
         self.session_count_label.config(
@@ -2256,7 +2041,7 @@ class StudyTrackerApp:
                 values=(
                     subject[0],
                     subject[1],
-                    self.format_duration(subject[2])
+                    format_duration(subject[2])
                 )
             )
 
@@ -2267,7 +2052,7 @@ class StudyTrackerApp:
                 values=(
                     daily[0],
                     daily[1],
-                    self.format_duration(daily[2])
+                    format_duration(daily[2])
                 )
             )
         self.update_daily_chart(daily_data)
@@ -2437,9 +2222,9 @@ class StudyTrackerApp:
 
         self.goal_status_label.config(
             text=(
-                f"Đã học: {self.format_duration(total_seconds)}"
-                f" / Mục tiêu: {self.format_duration(target_seconds)}"
-                f"\nCòn thiếu: {self.format_duration(remaining_seconds)}"
+                f"Đã học: {format_duration(total_seconds)}"
+                f" / Mục tiêu: {format_duration(target_seconds)}"
+                f"\nCòn thiếu: {format_duration(remaining_seconds)}"
             )
         )
 
