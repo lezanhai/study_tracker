@@ -11,6 +11,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from task_manager import TaskManagerView
+from subject_tab import SubjectTab
 from database import DatabaseManager
 from study_timer import StudyTimer
 from pomodoro_timer import PomodoroTimer
@@ -25,55 +26,64 @@ class StudyTrackerApp:
 
     def __init__(self, root):
 
-        self.root = root
-        self.root.title("Study Tracker")
-        self.root.geometry("1150x800")
-        self.root.minsize(950, 680)
-        self.root.configure(bg=BG)
+            self.root = root
+            self.root.title("Study Tracker")
+            self.root.geometry("1150x800")
+            self.root.minsize(950, 680)
+            self.root.configure(bg=BG)
 
-        self.db = DatabaseManager()
+            self.db = DatabaseManager()
 
-        # Đồng hồ học thông thường
-        self.timer = StudyTimer()
+            # Đồng hồ học thông thường
+            self.timer = StudyTimer()
 
-        # Đồng hồ Pomodoro
-        self.pomodoro = PomodoroTimer()
+            # Đồng hồ Pomodoro
+            self.pomodoro = PomodoroTimer()
 
-        self.timer_job = None
-        self.pomodoro_job = None
+            self.timer_job = None
+            self.pomodoro_job = None
 
-        self.active_subject_id = None
-        self.active_note = ""
-        self.selected_subject_id = None
-        self.pomodoro_notice = ""
-        self.pomodoro_notice_until = 0
+            self.active_subject_id = None
+            self.active_note = ""
+            self.selected_subject_id = None
+            self.pomodoro_notice = ""
+            self.pomodoro_notice_until = 0
 
-        self.subject_map = {}
+            self.subject_map = {}
 
-        apply_style()
-        self.build_header()
-        self.build_notebook()
+            apply_style()
+            self.build_header()
+            self.build_notebook()
 
-        self.build_subject_tab()
-        self.build_session_tab()
-        self.build_pomodoro_tab()
-        self.build_statistics_tab()
-        self.build_goal_tab()
+            # Khởi tạo tab quản lý môn học từ subject_tab.py
+            self.subject_view = SubjectTab(
+                self.subject_frame,
+                self.db,
+                self.refresh_subject_data,
+                self.subject_operations_busy
+            )
 
-        # Khởi tạo giao diện quản lý công việc
-        self.task_view = TaskManagerView(
-            self.task_frame,
-            self.db
-        )
+            # Khởi tạo các tab còn lại
+            self.build_session_tab()
+            self.build_pomodoro_tab()
+            self.build_statistics_tab()
+            self.build_goal_tab()
 
-        self.load_subjects()
-        self.load_sessions()
-        self.load_statistics()
+            # Khởi tạo giao diện quản lý công việc
+            self.task_view = TaskManagerView(
+                self.task_frame,
+                self.db
+            )
 
-        self.root.protocol(
-            "WM_DELETE_WINDOW",
-            self.close_app
-        )
+            # Tải dữ liệu ban đầu
+            self.load_subjects()
+            self.load_sessions()
+            self.load_statistics()
+
+            self.root.protocol(
+                "WM_DELETE_WINDOW",
+                self.close_app
+            )
 
 
     # =========================================
@@ -304,257 +314,35 @@ class StudyTrackerApp:
 
     # =========================================
     # TAB 1: QUẢN LÝ MÔN HỌC
+    # Đã tách giao diện sang subject_tab.py
     # =========================================
 
-    def build_subject_tab(self):
+    def subject_operations_busy(self):
 
-        self.page_title(
-            self.subject_frame,
-            "Quản lý môn học",
-            "Thêm, sửa và xóa các môn học của bạn"
+        return (
+            self.timer.state in ("running", "paused")
+            or self.pomodoro.state != "idle"
         )
 
-        card = self.create_card(
-            self.subject_frame,
-            "Thông tin môn học"
-        )
+    def refresh_subject_data(self):
 
-        form = ttk.Frame(card, style="Card.TFrame")
-        form.pack(fill="x")
-
-        ttk.Label(
-            form,
-            text="Tên môn học",
-            background=WHITE
-        ).grid(row=0, column=0, sticky="w", pady=5)
-
-        self.name_entry = ttk.Entry(form, width=30)
-        self.name_entry.grid(row=1, column=0, padx=(0, 15), pady=5)
-
-        ttk.Label(
-            form,
-            text="Mô tả",
-            background=WHITE
-        ).grid(row=0, column=1, sticky="w", pady=5)
-
-        self.description_entry = ttk.Entry(form, width=35)
-        self.description_entry.grid(row=1, column=1, padx=(0, 15), pady=5)
-
-        button_frame = ttk.Frame(card, style="Card.TFrame")
-        button_frame.pack(anchor="w", pady=(12, 0))
-
-        ttk.Button(
-            button_frame,
-            text="+ Thêm môn học",
-            command=self.add_subject
-        ).grid(row=0, column=0, padx=4)
-
-        ttk.Button(
-            button_frame,
-            text="Cập nhật",
-            command=self.update_selected_subject
-        ).grid(row=0, column=1, padx=4)
-
-        ttk.Button(
-            button_frame,
-            text="Xóa môn học",
-            style="Danger.TButton",
-            command=self.delete_selected_subject
-        ).grid(row=0, column=2, padx=4)
-
-        ttk.Button(
-            button_frame,
-            text="Làm mới",
-            style="Secondary.TButton",
-            command=self.clear_subject_form
-        ).grid(row=0, column=3, padx=4)
-
-        table_card = self.create_card(
-            self.subject_frame,
-            "Danh sách môn học (chọn một dòng để sửa hoặc xóa)"
-        )
-
-        self.subject_table = ttk.Treeview(
-            table_card,
-            columns=("id", "name", "description"),
-            show="headings"
-        )
-
-        setup_table(
-            self.subject_table,
-            [
-                ("id", "Mã môn", 80, "center"),
-                ("name", "Tên môn học", 220, "w"),
-                ("description", "Mô tả", 400, "w")
-            ]
-        )
-
-        self.subject_table.bind(
-            "<<TreeviewSelect>>",
-            self.select_subject
-        )
-
-        self.subject_table.pack(fill="both", expand=True)
-    def add_subject(self):
-
-        name = self.name_entry.get().strip()
-        description = self.description_entry.get().strip()
-
-        if not name:
-            messagebox.showwarning(
-                "Thông báo",
-                "Vui lòng nhập tên môn học!"
-            )
-            return
-
-        try:
-            self.db.add_subject(name, description)
-
-            messagebox.showinfo("Thành công", "Đã thêm môn học!")
-
-            self.clear_subject_form()
-            self.load_subjects()
-
-        except ValueError as error:
-            messagebox.showerror("Lỗi", str(error))
-
-    def select_subject(self, event=None):
-
-        selection = self.subject_table.selection()
-
-        if not selection:
-            return
-
-        values = self.subject_table.item(selection[0], "values")
-
-        self.selected_subject_id = int(values[0])
-
-        self.name_entry.delete(0, tk.END)
-        self.name_entry.insert(0, str(values[1]))
-
-        self.description_entry.delete(0, tk.END)
-        self.description_entry.insert(0, str(values[2]))
-
-    def clear_subject_form(self):
-
-        self.selected_subject_id = None
-
-        self.name_entry.delete(0, tk.END)
-        self.description_entry.delete(0, tk.END)
-
-        for item in self.subject_table.selection():
-            self.subject_table.selection_remove(item)
-
-    def update_selected_subject(self):
-
-        if self.selected_subject_id is None:
-            messagebox.showwarning(
-                "Thông báo",
-                "Hãy chọn môn học cần cập nhật trong bảng!"
-            )
-            return
-
-        name = self.name_entry.get().strip()
-        description = self.description_entry.get().strip()
-
-        if not name:
-            messagebox.showwarning(
-                "Thông báo",
-                "Tên môn học không được để trống!"
-            )
-            return
-
-        try:
-            self.db.update_subject(
-                self.selected_subject_id,
-                name,
-                description
-            )
-
-        except ValueError as error:
-            messagebox.showerror("Lỗi", str(error))
-            return
-
-        messagebox.showinfo("Thành công", "Đã cập nhật môn học!")
-
-        self.clear_subject_form()
-
-        # Tên môn đổi thì lịch sử, thống kê, công việc đều phải làm mới
+        # Cập nhật lại dữ liệu sau khi thêm, sửa hoặc xóa môn học
         self.load_subjects()
         self.load_sessions()
         self.load_statistics()
-        self.task_view.load_tasks()
 
-    def delete_selected_subject(self):
-
-        if self.selected_subject_id is None:
-            messagebox.showwarning(
-                "Thông báo",
-                "Hãy chọn môn học cần xóa trong bảng!"
-            )
-            return
-
-        if (
-            self.timer.state in ("running", "paused")
-            or self.pomodoro.state != "idle"
-        ):
-            messagebox.showwarning(
-                "Thông báo",
-                "Hãy kết thúc đồng hồ học tập hoặc Pomodoro "
-                "đang chạy trước khi xóa môn học!"
-            )
-            return
-
-        session_count, task_count = self.db.count_subject_usage(
-            self.selected_subject_id
-        )
-
-        if session_count > 0 or task_count > 0:
-            messagebox.showwarning(
-                "Không thể xóa",
-                f"Môn học này đang có {session_count} buổi học "
-                f"và {task_count} công việc.\n"
-                "Hãy xóa các dữ liệu đó trước rồi xóa môn học."
-            )
-            return
-
-        confirm = messagebox.askyesno(
-            "Xác nhận",
-            "Bạn có chắc chắn muốn xóa môn học này?"
-        )
-
-        if not confirm:
-            return
-
-        try:
-            self.db.delete_subject(self.selected_subject_id)
-
-        except ValueError as error:
-            messagebox.showerror("Lỗi", str(error))
-            return
-
-        messagebox.showinfo("Thành công", "Đã xóa môn học!")
-
-        self.clear_subject_form()
-        self.load_subjects()
     def load_subjects(self):
 
-        for item in self.subject_table.get_children():
-            self.subject_table.delete(item)
+        # Tải danh sách môn học trong tab riêng
+        self.subject_view.load_subjects()
 
-        subjects = self.db.get_subjects()
-
-        for subject in subjects:
-            self.subject_table.insert(
-                "",
-                tk.END,
-                values=subject
-            )
-
+        # Cập nhật danh sách môn học ở tab Theo dõi học tập
         self.load_subject_options()
+
+        # Cập nhật danh sách môn học ở tab Pomodoro
         self.load_pomodoro_subject_options()
 
-        # Cập nhật môn học cho tab Công việc
+        # Cập nhật danh sách môn học ở tab Công việc
         if hasattr(self, "task_view"):
             self.task_view.refresh_subjects()
 

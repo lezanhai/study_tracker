@@ -3,13 +3,16 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime, date
 
+from base_tab import BaseTab
 
-class TaskManagerView:
+
+class TaskManagerView(BaseTab):
 
     def __init__(self, parent, db):
 
-        self.parent = parent
-        self.db = db
+        # Gọi hàm khởi tạo của lớp cha BaseTab
+        super().__init__(parent, db)
+
         self.subject_map = {}
         self.selected_task_id = None
 
@@ -23,31 +26,14 @@ class TaskManagerView:
 
     def build_ui(self):
 
-        ttk.Label(
-            self.parent,
-            text="Quản lý công việc",
-            style="Title.TLabel"
-        ).pack(anchor="w", padx=25, pady=(22, 3))
-
-        ttk.Label(
-            self.parent,
-            text="Theo dõi bài tập, nhiệm vụ và thời hạn hoàn thành",
-            style="Subtitle.TLabel"
-        ).pack(anchor="w", padx=25, pady=(0, 18))
-
-        card = ttk.Frame(
-            self.parent,
-            style="Card.TFrame",
-            padding=18
+        self.page_title(
+            "Quản lý công việc",
+            "Theo dõi bài tập, nhiệm vụ và thời hạn hoàn thành"
         )
 
-        card.pack(fill="x", padx=25, pady=8)
-
-        ttk.Label(
-            card,
-            text="Thông tin công việc",
-            style="CardTitle.TLabel"
-        ).pack(anchor="w", pady=(0, 12))
+        card = self.create_card(
+            "Thông tin công việc"
+        )
 
         form = ttk.Frame(card, style="Card.TFrame")
         form.pack(fill="x")
@@ -179,24 +165,11 @@ class TaskManagerView:
         # DANH SÁCH CÔNG VIỆC
         # =================================
 
-        list_card = ttk.Frame(
-            self.parent,
-            style="Card.TFrame",
-            padding=18
-        )
-
-        list_card.pack(
+        list_card = self.create_card(
+            "Danh sách công việc",
             fill="both",
-            expand=True,
-            padx=25,
-            pady=8
+            expand=True
         )
-
-        ttk.Label(
-            list_card,
-            text="Danh sách công việc",
-            style="CardTitle.TLabel"
-        ).pack(anchor="w", pady=(0, 12))
 
         filter_frame = ttk.Frame(
             list_card,

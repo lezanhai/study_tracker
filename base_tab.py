@@ -1,15 +1,27 @@
+
 # base_tab.py
+
 from tkinter import ttk
 
 
 class BaseTab:
-    """Lớp cha cho mọi tab: giữ khung chứa, database và các hàm dựng
-    giao diện dùng chung (tiêu đề trang, thẻ nội dung)."""
+    """
+    Lớp cha cho các tab trong Study Tracker.
+
+    Chứa những thành phần giao diện được sử dụng chung:
+    - Tiêu đề trang
+    - Tiêu đề phụ
+    - Thẻ nội dung
+    """
 
     def __init__(self, parent, db):
 
         self.parent = parent
         self.db = db
+
+    # =====================================
+    # TIÊU ĐỀ TRANG
+    # =====================================
 
     def page_title(self, title, subtitle):
 
@@ -17,15 +29,32 @@ class BaseTab:
             self.parent,
             text=title,
             style="Title.TLabel"
-        ).pack(anchor="w", padx=25, pady=(22, 3))
+        ).pack(
+            anchor="w",
+            padx=25,
+            pady=(22, 3)
+        )
 
         ttk.Label(
             self.parent,
             text=subtitle,
             style="Subtitle.TLabel"
-        ).pack(anchor="w", padx=25, pady=(0, 18))
+        ).pack(
+            anchor="w",
+            padx=25,
+            pady=(0, 18)
+        )
 
-    def create_card(self, title=None):
+    # =====================================
+    # TẠO THẺ NỘI DUNG
+    # =====================================
+
+    def create_card(
+        self,
+        title=None,
+        fill="x",
+        expand=False
+    ):
 
         card = ttk.Frame(
             self.parent,
@@ -33,13 +62,22 @@ class BaseTab:
             padding=18
         )
 
-        card.pack(fill="x", padx=25, pady=8)
+        card.pack(
+            fill=fill,
+            expand=expand,
+            padx=25,
+            pady=8
+        )
 
         if title:
+
             ttk.Label(
                 card,
                 text=title,
                 style="CardTitle.TLabel"
-            ).pack(anchor="w", pady=(0, 12))
+            ).pack(
+                anchor="w",
+                pady=(0, 12)
+            )
 
         return card
