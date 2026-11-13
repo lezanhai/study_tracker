@@ -1,9 +1,9 @@
 # test_timers.py
 import unittest
 
-from stopwatch import Stopwatch, TimerState
-from study_timer import StudyTimer
-from pomodoro_timer import PomodoroTimer, Phase, BreakKind
+from services.stopwatch import Stopwatch, TimerState
+from services.study_timer import StudyTimer
+from services.pomodoro_timer import PomodoroTimer, Phase, BreakKind
 
 
 class FakeClock:

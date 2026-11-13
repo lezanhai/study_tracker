@@ -5,10 +5,10 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import date, datetime
 
-from base_tab import BaseTab
-from study_timer import StudyTimer
-from theme import WHITE, BLUE, MUTED
-from utils import format_duration, setup_table
+from ui.base_tab import BaseTab
+from services.study_timer import StudyTimer
+from ui.theme import WHITE, BLUE, MUTED
+from utils.utils import format_duration, setup_table
 
 
 class TrackingTab(BaseTab):

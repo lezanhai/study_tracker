@@ -5,9 +5,9 @@ import sqlite3
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-from base_tab import BaseTab
-from pomodoro_timer import PomodoroTimer
-from theme import WHITE, BLUE, TEAL, TEXT, NAVY, MUTED
+from ui.base_tab import BaseTab
+from services.pomodoro_timer import PomodoroTimer
+from ui.theme import WHITE, BLUE, TEAL, TEXT, NAVY, MUTED
 
 
 class PomodoroTab(BaseTab):

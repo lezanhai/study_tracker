@@ -2,7 +2,7 @@
 import unittest
 from datetime import date
 
-from utils import format_duration, get_date_range
+from utils.utils import format_duration, get_date_range
 
 TODAY = date(2026, 10, 31)   # thứ Bảy
 

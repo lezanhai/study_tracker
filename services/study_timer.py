@@ -2,7 +2,7 @@
 import time
 from datetime import datetime
 
-from stopwatch import Stopwatch, TimerState
+from services.stopwatch import Stopwatch, TimerState
 
 
 class StudyTimer(Stopwatch):

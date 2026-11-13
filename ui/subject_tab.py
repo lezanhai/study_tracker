@@ -2,9 +2,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-from base_tab import BaseTab
-from theme import WHITE
-from utils import setup_table
+from ui.base_tab import BaseTab
+from ui.theme import WHITE
+from utils.utils import setup_table
 
 
 class SubjectTab(BaseTab):

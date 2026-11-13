@@ -3,14 +3,14 @@ import tkinter as tk
 from tkinter import ttk
 from datetime import date
 
-from goals_tab import GoalsTab
-from stats_tab import StatsTab
-from task_manager import TaskManagerView
-from subject_tab import SubjectTab
+from ui.goals_tab import GoalsTab
+from ui.stats_tab import StatsTab
+from ui.task_manager import TaskManagerView
+from ui.subject_tab import SubjectTab
 from database import DatabaseManager
-from tracking_tab import TrackingTab
-from pomodoro_tab import PomodoroTab
-from theme import BG, WHITE, NAVY, apply_style
+from ui.tracking_tab import TrackingTab
+from ui.pomodoro_tab import PomodoroTab
+from ui.theme import BG, WHITE, NAVY, apply_style
 
 class StudyTrackerApp:
 

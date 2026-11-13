@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 from enum import Enum
 
-from stopwatch import Stopwatch, TimerState
+from services.stopwatch import Stopwatch, TimerState
 
 
 class Phase(str, Enum):

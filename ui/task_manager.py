@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime, date
 
-from base_tab import BaseTab
+from ui.base_tab import BaseTab
 
 
 class TaskManagerView(BaseTab):

@@ -4,9 +4,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import date, timedelta
 
-from base_tab import BaseTab
-from theme import WHITE, BLUE, MUTED
-from utils import format_duration
+from ui.base_tab import BaseTab
+from ui.theme import WHITE, BLUE, MUTED
+from utils.utils import format_duration
 
 
 class GoalsTab(BaseTab):

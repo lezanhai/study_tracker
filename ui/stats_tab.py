@@ -8,10 +8,10 @@ matplotlib.use("TkAgg")
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-from base_tab import BaseTab
-from exporter import export_report
-from theme import WHITE, BLUE, MUTED, CHART_COLORS
-from utils import format_duration, get_date_range, setup_table
+from ui.base_tab import BaseTab
+from services.exporter import export_report
+from ui.theme import WHITE, BLUE, MUTED, CHART_COLORS
+from utils.utils import format_duration, get_date_range, setup_table
 
 
 class StatsTab(BaseTab):
