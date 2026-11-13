@@ -34,27 +34,43 @@ Study Tracker được phát triển nhằm hỗ trợ người học tổ chứ
 
 ## 4. Cấu trúc dự án
 
-```text
 Study-Tracker/
 │
 ├── main.py
-│
 ├── database.py
-│
-├── subject_tab.py
-├── session_tab.py
-├── pomodoro_tab.py
-├── statistics_tab.py
-├── goal_tab.py
-├── task_tab.py
-│
 ├── study_tracker.db
+│
+├── ui/
+│   ├── __init__.py
+│   ├── subject_tab.py
+│   ├── tracking_tab.py
+│   ├── pomodoro_tab.py
+│   ├── stats_tab.py
+│   ├── goals_tab.py
+│   ├── task_manager.py
+│   ├── base_tab.py
+│   └── theme.py
+│
+├── services/
+│   ├── __init__.py
+|   ├── exporter.py
+|   ├── pomodoro_timer.py
+|   ├── stopwatch.py
+│   └── study_timer.py
+|
+├── utils/
+│   ├── __init__.py
+│   └── utils.py
+│
+├── scripts/
+│   └── seed_demo.py
+│
+├── tests/
+│   ├── test_timer.py
+│   └── test_utils.py
 │
 ├── README.md
 └── .gitignore
-```
-
-> Lưu ý: Tên các file trong sơ đồ trên là cấu trúc minh họa. Hãy điều chỉnh lại theo đúng tên file thực tế trong dự án.
 
 ## 5. Cài đặt và chạy chương trình
 
