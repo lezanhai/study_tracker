@@ -12,7 +12,7 @@ Study Tracker được phát triển nhằm hỗ trợ người học tổ chứ
 
 Ứng dụng sử dụng Python với thư viện Tkinter để xây dựng giao diện đồ họa và SQLite để lưu trữ dữ liệu cục bộ. Dự án áp dụng lập trình hướng đối tượng (OOP), đồng thời tổ chức mã nguồn thành các module riêng biệt để thuận tiện cho việc phát triển và bảo trì.
 
-## 🚀 2. Các chức năng chính
+## 2. Các chức năng chính
 
 Ứng dụng bao gồm 6 khu vực chức năng:
 
