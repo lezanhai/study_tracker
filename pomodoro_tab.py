@@ -433,6 +433,9 @@ class PomodoroTab(BaseTab):
 
     def is_active(self):
         return self.pomodoro.state in ("running", "paused")
+    
+    def is_occupied(self):
+        return self.pomodoro.state != "idle"
 
     def confirm_and_flush_on_exit(self):
         """
