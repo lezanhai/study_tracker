@@ -34,6 +34,7 @@ Study Tracker được phát triển nhằm hỗ trợ người học tổ chứ
 
 ## 4. Cấu trúc dự án
 
+<pre>
 Study-Tracker/
 ├── main.py
 ├── database.py
@@ -64,6 +65,7 @@ Study-Tracker/
 │   └── test_utils.py
 ├── README.md
 └── .gitignore
+</pre>
 
 ## 5. Cài đặt và chạy chương trình
 
